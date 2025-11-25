@@ -5,20 +5,14 @@ import { postService } from '../services/postService';
 import type { User } from '../services/userService';
 import type { Post } from '../services/postService';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
+import { Alert, Table, Modal } from '@/components/ui';
 import {
-  Alert,
-  Table,
-  Modal,
-  Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Textarea,
-} from '@/components/ui';
+  StatsCards,
+  EntityTypeTabs,
+  UserForm,
+  PostForm,
+} from '@/components/management';
 
 type EntityType = 'user' | 'post';
 type Entity = User | Post;
@@ -294,23 +288,10 @@ export const ManagementPage: React.FC = () => {
         </div>
 
         <Card className="p-2.5">
-          <div className="mb-4 border-b-2 border-gray-300 pb-1.5">
-            <Button
-              variant={entityType === 'post' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setEntityType('post')}
-              className="mr-1.5"
-            >
-              게시글
-            </Button>
-            <Button
-              variant={entityType === 'user' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setEntityType('user')}
-            >
-              사용자
-            </Button>
-          </div>
+          <EntityTypeTabs
+            entityType={entityType}
+            onEntityTypeChange={setEntityType}
+          />
 
           <div>
             <div className="mb-4 text-right">
@@ -343,60 +324,13 @@ export const ManagementPage: React.FC = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(130px,1fr))] gap-2.5 mb-4">
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="p-3 pt-3">
-                  <div className="text-xs text-gray-600 mb-1">전체</div>
-                  <div className="text-2xl font-bold text-blue-600">
-                    {stats.total}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className={`${stats.stat1.bgColor} ${stats.stat1.borderColor}`}>
-                <CardContent className="p-3 pt-3">
-                  <div className="text-xs text-gray-600 mb-1">
-                    {stats.stat1.label}
-                  </div>
-                  <div className={`text-2xl font-bold ${stats.stat1.textColor}`}>
-                    {stats.stat1.value}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className={`${stats.stat2.bgColor} ${stats.stat2.borderColor}`}>
-                <CardContent className="p-3 pt-3">
-                  <div className="text-xs text-gray-600 mb-1">
-                    {stats.stat2.label}
-                  </div>
-                  <div className={`text-2xl font-bold ${stats.stat2.textColor}`}>
-                    {stats.stat2.value}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className={`${stats.stat3.bgColor} ${stats.stat3.borderColor}`}>
-                <CardContent className="p-3 pt-3">
-                  <div className="text-xs text-gray-600 mb-1">
-                    {stats.stat3.label}
-                  </div>
-                  <div className={`text-2xl font-bold ${stats.stat3.textColor}`}>
-                    {stats.stat3.value}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className={`${stats.stat4.bgColor} ${stats.stat4.borderColor}`}>
-                <CardContent className="p-3 pt-3">
-                  <div className="text-xs text-gray-600 mb-1">
-                    {stats.stat4.label}
-                  </div>
-                  <div className={`text-2xl font-bold ${stats.stat4.textColor}`}>
-                    {stats.stat4.value}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <StatsCards
+              total={stats.total}
+              stat1={stats.stat1}
+              stat2={stats.stat2}
+              stat3={stats.stat3}
+              stat4={stats.stat4}
+            />
 
             <div className="border border-gray-300 bg-white overflow-auto">
               <Table
@@ -445,138 +379,17 @@ export const ManagementPage: React.FC = () => {
       >
         <div className="space-y-4">
           {entityType === 'user' ? (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="create-username">
-                  사용자명 <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="create-username"
-                  value={formData.username || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, username: e.target.value })
-                  }
-                  placeholder="사용자명을 입력하세요"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="create-email">
-                  이메일 <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="create-email"
-                  type="email"
-                  value={formData.email || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  placeholder="이메일을 입력하세요"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>역할</Label>
-                  <Select
-                    value={formData.role || 'user'}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, role: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="역할 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="user">사용자</SelectItem>
-                      <SelectItem value="moderator">운영자</SelectItem>
-                      <SelectItem value="admin">관리자</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>상태</Label>
-                  <Select
-                    value={formData.status || 'active'}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, status: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="상태 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">활성</SelectItem>
-                      <SelectItem value="inactive">비활성</SelectItem>
-                      <SelectItem value="suspended">정지</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </>
+            <UserForm
+              formData={formData}
+              onFormDataChange={setFormData}
+              idPrefix="create-"
+            />
           ) : (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="create-title">
-                  제목 <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="create-title"
-                  value={formData.title || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder="게시글 제목을 입력하세요"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="create-author">
-                    작성자 <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="create-author"
-                    value={formData.author || ''}
-                    onChange={(e) =>
-                      setFormData({ ...formData, author: e.target.value })
-                    }
-                    placeholder="작성자명"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>카테고리</Label>
-                  <Select
-                    value={formData.category || ''}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, category: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="카테고리 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="development">Development</SelectItem>
-                      <SelectItem value="design">Design</SelectItem>
-                      <SelectItem value="accessibility">Accessibility</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="create-content">내용</Label>
-                <Textarea
-                  id="create-content"
-                  value={formData.content || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, content: e.target.value })
-                  }
-                  placeholder="게시글 내용을 입력하세요"
-                  rows={6}
-                />
-              </div>
-            </>
+            <PostForm
+              formData={formData}
+              onFormDataChange={setFormData}
+              idPrefix="create-"
+            />
           )}
         </div>
       </Modal>
@@ -620,138 +433,17 @@ export const ManagementPage: React.FC = () => {
           )}
 
           {entityType === 'user' ? (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="edit-username">
-                  사용자명 <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="edit-username"
-                  value={formData.username || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, username: e.target.value })
-                  }
-                  placeholder="사용자명을 입력하세요"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-email">
-                  이메일 <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="edit-email"
-                  type="email"
-                  value={formData.email || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  placeholder="이메일을 입력하세요"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>역할</Label>
-                  <Select
-                    value={formData.role || 'user'}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, role: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="역할 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="user">사용자</SelectItem>
-                      <SelectItem value="moderator">운영자</SelectItem>
-                      <SelectItem value="admin">관리자</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>상태</Label>
-                  <Select
-                    value={formData.status || 'active'}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, status: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="상태 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">활성</SelectItem>
-                      <SelectItem value="inactive">비활성</SelectItem>
-                      <SelectItem value="suspended">정지</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </>
+            <UserForm
+              formData={formData}
+              onFormDataChange={setFormData}
+              idPrefix="edit-"
+            />
           ) : (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="edit-title">
-                  제목 <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="edit-title"
-                  value={formData.title || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder="게시글 제목을 입력하세요"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-author">
-                    작성자 <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="edit-author"
-                    value={formData.author || ''}
-                    onChange={(e) =>
-                      setFormData({ ...formData, author: e.target.value })
-                    }
-                    placeholder="작성자명"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>카테고리</Label>
-                  <Select
-                    value={formData.category || ''}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, category: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="카테고리 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="development">Development</SelectItem>
-                      <SelectItem value="design">Design</SelectItem>
-                      <SelectItem value="accessibility">Accessibility</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-content">내용</Label>
-                <Textarea
-                  id="edit-content"
-                  value={formData.content || ''}
-                  onChange={(e) =>
-                    setFormData({ ...formData, content: e.target.value })
-                  }
-                  placeholder="게시글 내용을 입력하세요"
-                  rows={6}
-                />
-              </div>
-            </>
+            <PostForm
+              formData={formData}
+              onFormDataChange={setFormData}
+              idPrefix="edit-"
+            />
           )}
         </div>
       </Modal>
