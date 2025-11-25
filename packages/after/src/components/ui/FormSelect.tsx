@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 // Select Component - Inconsistent with Input component
 interface Option {
@@ -34,25 +35,32 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   size = 'md',
 }) => {
   void size; // Keep for API consistency but not used in rendering
-  const selectClasses = ['form-select', error && 'error'].filter(Boolean).join(' ');
-  const helperClasses = ['form-helper-text', error && 'error'].filter(Boolean).join(' ');
 
   return (
-    <div className="form-group">
+    <div className="mb-4">
       {label && (
-        <label className="form-label">
+        <label
+          htmlFor={name}
+          className="block mb-1.5 text-gray-700 text-sm font-bold"
+        >
           {label}
-          {required && <span style={{ color: '#d32f2f' }}>*</span>}
+          {required && <span className="text-destructive ml-0.5">*</span>}
         </label>
       )}
 
       <select
+        id={name}
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
         disabled={disabled}
-        className={selectClasses}
+        className={cn(
+          "w-full px-2.5 py-2 text-sm text-black border rounded-sm bg-white transition-colors box-border",
+          "focus:border-blue-600 focus:outline-none",
+          "disabled:bg-gray-100 disabled:cursor-not-allowed",
+          error ? "border-destructive" : "border-gray-300"
+        )}
       >
         <option value="" disabled>
           {placeholder}
@@ -64,8 +72,16 @@ export const FormSelect: React.FC<FormSelectProps> = ({
         ))}
       </select>
 
-      {error && <span className={helperClasses}>{error}</span>}
-      {helpText && !error && <span className="form-helper-text">{helpText}</span>}
+      {error && (
+        <span className="text-destructive text-xs mt-1 block">
+          {error}
+        </span>
+      )}
+      {helpText && !error && (
+        <span className="text-gray-600 text-xs mt-1 block">
+          {helpText}
+        </span>
+      )}
     </div>
   );
 };

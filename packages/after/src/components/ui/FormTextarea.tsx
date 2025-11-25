@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 // Textarea Component - Yet another inconsistent API
 interface FormTextareaProps {
@@ -26,19 +27,20 @@ export const FormTextarea: React.FC<FormTextareaProps> = ({
   helpText,
   rows = 4,
 }) => {
-  const textareaClasses = ['form-textarea', error && 'error'].filter(Boolean).join(' ');
-  const helperClasses = ['form-helper-text', error && 'error'].filter(Boolean).join(' ');
-
   return (
-    <div className="form-group">
+    <div className="mb-4">
       {label && (
-        <label className="form-label">
+        <label
+          htmlFor={name}
+          className="block mb-1.5 text-gray-700 text-sm font-bold"
+        >
           {label}
-          {required && <span style={{ color: '#d32f2f' }}>*</span>}
+          {required && <span className="text-destructive ml-0.5">*</span>}
         </label>
       )}
 
       <textarea
+        id={name}
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -46,11 +48,24 @@ export const FormTextarea: React.FC<FormTextareaProps> = ({
         required={required}
         disabled={disabled}
         rows={rows}
-        className={textareaClasses}
+        className={cn(
+          "w-full min-h-24 px-3.5 py-4 text-base text-black border rounded bg-white box-border transition-colors outline-none resize-y",
+          "focus:border-blue-600 focus:border-2 focus:px-[13px] focus:py-[15px]",
+          "disabled:bg-gray-300/50",
+          error ? "border-destructive" : "border-gray-400/60"
+        )}
       />
 
-      {error && <span className={helperClasses}>{error}</span>}
-      {helpText && !error && <span className="form-helper-text">{helpText}</span>}
+      {error && (
+        <span className="text-destructive text-xs mt-1 block">
+          {error}
+        </span>
+      )}
+      {helpText && !error && (
+        <span className="text-gray-600 text-xs mt-1 block">
+          {helpText}
+        </span>
+      )}
     </div>
   );
 };

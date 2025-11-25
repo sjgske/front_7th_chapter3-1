@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { cn } from '@/lib/utils';
 
-// 🚨 Bad Practice: UI 컴포넌트가 도메인 규칙을 알고 있음
 interface FormInputProps {
   name: string;
   value: string;
@@ -13,12 +13,17 @@ interface FormInputProps {
   error?: string;
   helpText?: string;
   width?: 'small' | 'medium' | 'large' | 'full';
-
-  // 🚨 도메인 관심사 추가
   fieldType?: 'username' | 'email' | 'postTitle' | 'slug' | 'normal';
-  entityType?: 'user' | 'post'; // 엔티티 타입까지 알고 있음
-  checkBusinessRules?: boolean; // 비즈니스 규칙 검사 여부
+  entityType?: 'user' | 'post';
+  checkBusinessRules?: boolean;
 }
+
+const widthClasses = {
+  small: 'w-[200px]',
+  medium: 'w-[300px]',
+  large: 'w-[400px]',
+  full: 'w-full',
+};
 
 export const FormInput: React.FC<FormInputProps> = ({
   name,
@@ -38,7 +43,6 @@ export const FormInput: React.FC<FormInputProps> = ({
 }) => {
   const [internalError, setInternalError] = useState('');
 
-  // 🚨 Bad Practice: UI 컴포넌트가 비즈니스 규칙을 검증함
   const validateField = (val: string) => {
     setInternalError('');
 
@@ -54,7 +58,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         setInternalError('사용자명은 20자 이하여야 합니다');
       }
 
-      // 🚨 도메인 특화 검증: 예약어 체크
+      // 도메인 특화 검증: 예약어 체크
       if (checkBusinessRules) {
         const reservedWords = ['admin', 'root', 'system', 'administrator'];
         if (reservedWords.includes(val.toLowerCase())) {
@@ -66,7 +70,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         setInternalError('올바른 이메일 형식이 아닙니다');
       }
 
-      // 🚨 비즈니스 규칙: User 엔티티의 이메일은 회사 도메인만
+      // 비즈니스 규칙: User 엔티티의 이메일은 회사 도메인만
       if (checkBusinessRules && entityType === 'user') {
         if (!val.endsWith('@company.com') && !val.endsWith('@example.com')) {
           setInternalError('회사 이메일(@company.com 또는 @example.com)만 사용 가능합니다');
@@ -79,7 +83,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         setInternalError('제목은 100자 이하여야 합니다');
       }
 
-      // 🚨 비즈니스 규칙: 금칙어 체크
+      // 비즈니스 규칙: 금칙어 체크
       if (checkBusinessRules && entityType === 'post') {
         const bannedWords = ['광고', '스팸', '홍보'];
         const hasBannedWord = bannedWords.some(word => val.includes(word));
@@ -97,15 +101,16 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   const displayError = error || internalError;
-  const inputClasses = ['form-input', displayError && 'error', `input-width-${width}`].filter(Boolean).join(' ');
-  const helperClasses = ['form-helper-text', displayError && 'error'].filter(Boolean).join(' ');
 
   return (
-    <div className="form-group">
+    <div className="mb-4">
       {label && (
-        <label htmlFor={name} className="form-label">
+        <label
+          htmlFor={name}
+          className="block mb-1.5 text-gray-700 text-sm font-bold"
+        >
           {label}
-          {required && <span style={{ color: '#d32f2f' }}>*</span>}
+          {required && <span className="text-destructive ml-0.5">*</span>}
         </label>
       )}
 
@@ -118,11 +123,25 @@ export const FormInput: React.FC<FormInputProps> = ({
         placeholder={placeholder}
         required={required}
         disabled={disabled}
-        className={inputClasses}
+        className={cn(
+          "px-2.5 py-2 text-sm text-black border rounded-sm bg-white transition-colors box-border",
+          "focus:border-blue-600 focus:outline-none",
+          "disabled:bg-gray-100 disabled:cursor-not-allowed",
+          displayError ? "border-destructive" : "border-gray-300",
+          widthClasses[width]
+        )}
       />
 
-      {displayError && <span className={helperClasses}>{displayError}</span>}
-      {helpText && !displayError && <span className="form-helper-text">{helpText}</span>}
+      {displayError && (
+        <span className="text-destructive text-xs mt-1 block">
+          {displayError}
+        </span>
+      )}
+      {helpText && !displayError && (
+        <span className="text-gray-600 text-xs mt-1 block">
+          {helpText}
+        </span>
+      )}
     </div>
   );
 };
