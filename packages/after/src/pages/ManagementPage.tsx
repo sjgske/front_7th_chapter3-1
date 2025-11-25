@@ -10,9 +10,14 @@ import {
   Alert,
   Table,
   Modal,
-  FormSelect,
-  FormTextarea,
-  FormInput,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
 } from '@/components/ui';
 
 type EntityType = 'user' | 'post';
@@ -438,113 +443,139 @@ export const ManagementPage: React.FC = () => {
           </>
         }
       >
-        <div>
+        <div className="space-y-4">
           {entityType === 'user' ? (
             <>
-              <FormInput
-                name="username"
-                value={formData.username || ''}
-                onChange={(value) =>
-                  setFormData({ ...formData, username: value })
-                }
-                label="사용자명"
-                placeholder="사용자명을 입력하세요"
-                required
-                width="full"
-                fieldType="username"
-              />
-              <FormInput
-                name="email"
-                value={formData.email || ''}
-                onChange={(value) => setFormData({ ...formData, email: value })}
-                label="이메일"
-                placeholder="이메일을 입력하세요"
-                type="email"
-                required
-                width="full"
-                fieldType="email"
-              />
+              <div className="space-y-2">
+                <Label htmlFor="create-username">
+                  사용자명 <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="create-username"
+                  value={formData.username || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
+                  placeholder="사용자명을 입력하세요"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="create-email">
+                  이메일 <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="create-email"
+                  type="email"
+                  value={formData.email || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="이메일을 입력하세요"
+                  required
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
-                <FormSelect
-                  name="role"
-                  value={formData.role || 'user'}
-                  onChange={(value) =>
-                    setFormData({ ...formData, role: value })
-                  }
-                  options={[
-                    { value: 'user', label: '사용자' },
-                    { value: 'moderator', label: '운영자' },
-                    { value: 'admin', label: '관리자' },
-                  ]}
-                  label="역할"
-                  size="md"
-                />
-                <FormSelect
-                  name="status"
-                  value={formData.status || 'active'}
-                  onChange={(value) =>
-                    setFormData({ ...formData, status: value })
-                  }
-                  options={[
-                    { value: 'active', label: '활성' },
-                    { value: 'inactive', label: '비활성' },
-                    { value: 'suspended', label: '정지' },
-                  ]}
-                  label="상태"
-                  size="md"
-                />
+                <div className="space-y-2">
+                  <Label>역할</Label>
+                  <Select
+                    value={formData.role || 'user'}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, role: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="역할 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">사용자</SelectItem>
+                      <SelectItem value="moderator">운영자</SelectItem>
+                      <SelectItem value="admin">관리자</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>상태</Label>
+                  <Select
+                    value={formData.status || 'active'}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, status: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="상태 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">활성</SelectItem>
+                      <SelectItem value="inactive">비활성</SelectItem>
+                      <SelectItem value="suspended">정지</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </>
           ) : (
             <>
-              <FormInput
-                name="title"
-                value={formData.title || ''}
-                onChange={(value) => setFormData({ ...formData, title: value })}
-                label="제목"
-                placeholder="게시글 제목을 입력하세요"
-                required
-                width="full"
-                fieldType="postTitle"
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <FormInput
-                  name="author"
-                  value={formData.author || ''}
-                  onChange={(value) =>
-                    setFormData({ ...formData, author: value })
+              <div className="space-y-2">
+                <Label htmlFor="create-title">
+                  제목 <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="create-title"
+                  value={formData.title || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
                   }
-                  label="작성자"
-                  placeholder="작성자명"
+                  placeholder="게시글 제목을 입력하세요"
                   required
-                  width="full"
-                />
-                <FormSelect
-                  name="category"
-                  value={formData.category || ''}
-                  onChange={(value) =>
-                    setFormData({ ...formData, category: value })
-                  }
-                  options={[
-                    { value: 'development', label: 'Development' },
-                    { value: 'design', label: 'Design' },
-                    { value: 'accessibility', label: 'Accessibility' },
-                  ]}
-                  label="카테고리"
-                  placeholder="카테고리 선택"
-                  size="md"
                 />
               </div>
-              <FormTextarea
-                name="content"
-                value={formData.content || ''}
-                onChange={(value) =>
-                  setFormData({ ...formData, content: value })
-                }
-                label="내용"
-                placeholder="게시글 내용을 입력하세요"
-                rows={6}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="create-author">
+                    작성자 <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="create-author"
+                    value={formData.author || ''}
+                    onChange={(e) =>
+                      setFormData({ ...formData, author: e.target.value })
+                    }
+                    placeholder="작성자명"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>카테고리</Label>
+                  <Select
+                    value={formData.category || ''}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, category: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="카테고리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="development">Development</SelectItem>
+                      <SelectItem value="design">Design</SelectItem>
+                      <SelectItem value="accessibility">Accessibility</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="create-content">내용</Label>
+                <Textarea
+                  id="create-content"
+                  value={formData.content || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, content: e.target.value })
+                  }
+                  placeholder="게시글 내용을 입력하세요"
+                  rows={6}
+                />
+              </div>
             </>
           )}
         </div>
@@ -579,7 +610,7 @@ export const ManagementPage: React.FC = () => {
           </>
         }
       >
-        <div>
+        <div className="space-y-4">
           {selectedItem && (
             <Alert variant="info">
               ID: {selectedItem.id} | 생성일: {selectedItem.createdAt}
@@ -590,110 +621,136 @@ export const ManagementPage: React.FC = () => {
 
           {entityType === 'user' ? (
             <>
-              <FormInput
-                name="username"
-                value={formData.username || ''}
-                onChange={(value) =>
-                  setFormData({ ...formData, username: value })
-                }
-                label="사용자명"
-                placeholder="사용자명을 입력하세요"
-                required
-                width="full"
-                fieldType="username"
-              />
-              <FormInput
-                name="email"
-                value={formData.email || ''}
-                onChange={(value) => setFormData({ ...formData, email: value })}
-                label="이메일"
-                placeholder="이메일을 입력하세요"
-                type="email"
-                required
-                width="full"
-                fieldType="email"
-              />
+              <div className="space-y-2">
+                <Label htmlFor="edit-username">
+                  사용자명 <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="edit-username"
+                  value={formData.username || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
+                  placeholder="사용자명을 입력하세요"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">
+                  이메일 <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="edit-email"
+                  type="email"
+                  value={formData.email || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="이메일을 입력하세요"
+                  required
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
-                <FormSelect
-                  name="role"
-                  value={formData.role || 'user'}
-                  onChange={(value) =>
-                    setFormData({ ...formData, role: value })
-                  }
-                  options={[
-                    { value: 'user', label: '사용자' },
-                    { value: 'moderator', label: '운영자' },
-                    { value: 'admin', label: '관리자' },
-                  ]}
-                  label="역할"
-                  size="md"
-                />
-                <FormSelect
-                  name="status"
-                  value={formData.status || 'active'}
-                  onChange={(value) =>
-                    setFormData({ ...formData, status: value })
-                  }
-                  options={[
-                    { value: 'active', label: '활성' },
-                    { value: 'inactive', label: '비활성' },
-                    { value: 'suspended', label: '정지' },
-                  ]}
-                  label="상태"
-                  size="md"
-                />
+                <div className="space-y-2">
+                  <Label>역할</Label>
+                  <Select
+                    value={formData.role || 'user'}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, role: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="역할 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">사용자</SelectItem>
+                      <SelectItem value="moderator">운영자</SelectItem>
+                      <SelectItem value="admin">관리자</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>상태</Label>
+                  <Select
+                    value={formData.status || 'active'}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, status: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="상태 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">활성</SelectItem>
+                      <SelectItem value="inactive">비활성</SelectItem>
+                      <SelectItem value="suspended">정지</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </>
           ) : (
             <>
-              <FormInput
-                name="title"
-                value={formData.title || ''}
-                onChange={(value) => setFormData({ ...formData, title: value })}
-                label="제목"
-                placeholder="게시글 제목을 입력하세요"
-                required
-                width="full"
-                fieldType="postTitle"
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <FormInput
-                  name="author"
-                  value={formData.author || ''}
-                  onChange={(value) =>
-                    setFormData({ ...formData, author: value })
+              <div className="space-y-2">
+                <Label htmlFor="edit-title">
+                  제목 <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="edit-title"
+                  value={formData.title || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
                   }
-                  label="작성자"
-                  placeholder="작성자명"
+                  placeholder="게시글 제목을 입력하세요"
                   required
-                  width="full"
-                />
-                <FormSelect
-                  name="category"
-                  value={formData.category || ''}
-                  onChange={(value) =>
-                    setFormData({ ...formData, category: value })
-                  }
-                  options={[
-                    { value: 'development', label: 'Development' },
-                    { value: 'design', label: 'Design' },
-                    { value: 'accessibility', label: 'Accessibility' },
-                  ]}
-                  label="카테고리"
-                  placeholder="카테고리 선택"
-                  size="md"
                 />
               </div>
-              <FormTextarea
-                name="content"
-                value={formData.content || ''}
-                onChange={(value) =>
-                  setFormData({ ...formData, content: value })
-                }
-                label="내용"
-                placeholder="게시글 내용을 입력하세요"
-                rows={6}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-author">
+                    작성자 <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="edit-author"
+                    value={formData.author || ''}
+                    onChange={(e) =>
+                      setFormData({ ...formData, author: e.target.value })
+                    }
+                    placeholder="작성자명"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>카테고리</Label>
+                  <Select
+                    value={formData.category || ''}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, category: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="카테고리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="development">Development</SelectItem>
+                      <SelectItem value="design">Design</SelectItem>
+                      <SelectItem value="accessibility">Accessibility</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-content">내용</Label>
+                <Textarea
+                  id="edit-content"
+                  value={formData.content || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, content: e.target.value })
+                  }
+                  placeholder="게시글 내용을 입력하세요"
+                  rows={6}
+                />
+              </div>
             </>
           )}
         </div>
