@@ -1,128 +1,159 @@
-import React from 'react';
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
+import { cn } from "@/lib/utils"
 
-interface BadgeProps {
-  children?: React.ReactNode;
-  type?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
-  size?: 'small' | 'medium' | 'large';
-  pill?: boolean;
-  status?: 'published' | 'draft' | 'archived' | 'pending' | 'rejected';
-  userRole?: 'admin' | 'moderator' | 'user' | 'guest';
-  priority?: 'high' | 'medium' | 'low';
-  paymentStatus?: 'paid' | 'pending' | 'failed' | 'refunded';
-  showIcon?: boolean;
-}
+const badgeVariants = cva(
+  "inline-flex items-center justify-center font-bold whitespace-nowrap transition-colors",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground",
+        primary: "bg-blue-600 text-white",
+        secondary: "bg-gray-500 text-white",
+        success: "bg-green-600 text-white",
+        danger: "bg-red-600 text-white",
+        warning: "bg-orange-500 text-white",
+        info: "bg-blue-500 text-white",
+        outline: "border border-input bg-background text-foreground",
+      },
+      size: {
+        small: "px-1 text-[0.625rem] h-4",
+        medium: "px-2 text-xs h-5",
+        large: "px-2.5 text-[0.8125rem] h-6",
+      },
+      shape: {
+        default: "rounded-sm",
+        pill: "rounded-full",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "medium",
+      shape: "default",
+    },
+  }
+)
 
-export const Badge: React.FC<BadgeProps> = ({
-  children,
-  type = 'primary',
-  size = 'medium',
-  pill = false,
+export type BadgeProps = React.HTMLAttributes<HTMLDivElement> &
+  VariantProps<typeof badgeVariants> & {
+    status?: 'published' | 'draft' | 'archived' | 'pending' | 'rejected';
+    userRole?: 'admin' | 'moderator' | 'user' | 'guest';
+    priority?: 'high' | 'medium' | 'low';
+    paymentStatus?: 'paid' | 'pending' | 'failed' | 'refunded';
+  }
+
+function Badge({
+  className,
+  variant,
+  size,
+  shape,
   status,
   userRole,
   priority,
   paymentStatus,
-  showIcon = false,
-}) => {
-  void showIcon;
-
-  let actualType = type;
+  children,
+  ...props
+}: BadgeProps) {
+  let actualVariant = variant;
   let actualContent = children;
 
+  // Status mapping
   if (status) {
     switch (status) {
       case 'published':
-        actualType = 'success';
+        actualVariant = 'success';
         actualContent = actualContent || '게시됨';
         break;
       case 'draft':
-        actualType = 'warning';
+        actualVariant = 'warning';
         actualContent = actualContent || '임시저장';
         break;
       case 'archived':
-        actualType = 'secondary';
+        actualVariant = 'secondary';
         actualContent = actualContent || '보관됨';
         break;
       case 'pending':
-        actualType = 'info';
+        actualVariant = 'info';
         actualContent = actualContent || '대기중';
         break;
       case 'rejected':
-        actualType = 'danger';
+        actualVariant = 'danger';
         actualContent = actualContent || '거부됨';
         break;
     }
   }
 
+  // User role mapping
   if (userRole) {
     switch (userRole) {
       case 'admin':
-        actualType = 'danger';
+        actualVariant = 'danger';
         actualContent = actualContent || '관리자';
         break;
       case 'moderator':
-        actualType = 'warning';
+        actualVariant = 'warning';
         actualContent = actualContent || '운영자';
         break;
       case 'user':
-        actualType = 'primary';
+        actualVariant = 'primary';
         actualContent = actualContent || '사용자';
         break;
       case 'guest':
-        actualType = 'secondary';
+        actualVariant = 'secondary';
         actualContent = actualContent || '게스트';
         break;
     }
   }
 
+  // Priority mapping
   if (priority) {
     switch (priority) {
       case 'high':
-        actualType = 'danger';
+        actualVariant = 'danger';
         actualContent = actualContent || '높음';
         break;
       case 'medium':
-        actualType = 'warning';
+        actualVariant = 'warning';
         actualContent = actualContent || '보통';
         break;
       case 'low':
-        actualType = 'info';
+        actualVariant = 'info';
         actualContent = actualContent || '낮음';
         break;
     }
   }
 
+  // Payment status mapping
   if (paymentStatus) {
     switch (paymentStatus) {
       case 'paid':
-        actualType = 'success';
+        actualVariant = 'success';
         actualContent = actualContent || '결제완료';
         break;
       case 'pending':
-        actualType = 'warning';
+        actualVariant = 'warning';
         actualContent = actualContent || '결제대기';
         break;
       case 'failed':
-        actualType = 'danger';
+        actualVariant = 'danger';
         actualContent = actualContent || '결제실패';
         break;
       case 'refunded':
-        actualType = 'secondary';
+        actualVariant = 'secondary';
         actualContent = actualContent || '환불됨';
         break;
     }
   }
 
-  const classes = [
-    'badge',
-    `badge-${actualType}`,
-    `badge-${size}`,
-    pill && 'badge-pill',
-  ].filter(Boolean).join(' ');
-
   return (
-    <span className={classes}>
+    <div
+      className={cn(badgeVariants({ variant: actualVariant, size, shape, className }))}
+      {...props}
+    >
       {actualContent}
-    </span>
-  );
-};
+    </div>
+  )
+}
+
+export { Badge, badgeVariants }
