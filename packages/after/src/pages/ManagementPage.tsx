@@ -6,12 +6,13 @@ import type { User } from '../services/userService';
 import type { Post } from '../services/postService';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Alert, Table, Modal } from '@/components/ui';
+import { Table } from '@/components/ui';
 import {
   StatsCards,
   EntityTypeTabs,
-  UserForm,
-  PostForm,
+  AlertMessages,
+  CreateModal,
+  EditModal,
 } from '@/components/management';
 
 type EntityType = 'user' | 'post';
@@ -300,29 +301,14 @@ export const ManagementPage: React.FC = () => {
               </Button>
             </div>
 
-            {showSuccessAlert && (
-              <div className="mb-2.5">
-                <Alert
-                  variant="success"
-                  title="성공"
-                  onClose={() => setShowSuccessAlert(false)}
-                >
-                  {alertMessage}
-                </Alert>
-              </div>
-            )}
-
-            {showErrorAlert && (
-              <div className="mb-2.5">
-                <Alert
-                  variant="error"
-                  title="오류"
-                  onClose={() => setShowErrorAlert(false)}
-                >
-                  {errorMessage}
-                </Alert>
-              </div>
-            )}
+            <AlertMessages
+              showSuccessAlert={showSuccessAlert}
+              successMessage={alertMessage}
+              onSuccessClose={() => setShowSuccessAlert(false)}
+              showErrorAlert={showErrorAlert}
+              errorMessage={errorMessage}
+              onErrorClose={() => setShowErrorAlert(false)}
+            />
 
             <StatsCards
               total={stats.total}
@@ -350,103 +336,31 @@ export const ManagementPage: React.FC = () => {
         </Card>
       </div>
 
-      <Modal
+      <CreateModal
         isOpen={isCreateModalOpen}
         onClose={() => {
           setIsCreateModalOpen(false);
           setFormData({});
         }}
-        title={`새 ${entityType === 'user' ? '사용자' : '게시글'} 만들기`}
-        size="large"
-        showFooter
-        footerContent={
-          <>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                setIsCreateModalOpen(false);
-                setFormData({});
-              }}
-            >
-              취소
-            </Button>
-            <Button size="sm" onClick={handleCreate}>
-              생성
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          {entityType === 'user' ? (
-            <UserForm
-              formData={formData}
-              onFormDataChange={setFormData}
-              idPrefix="create-"
-            />
-          ) : (
-            <PostForm
-              formData={formData}
-              onFormDataChange={setFormData}
-              idPrefix="create-"
-            />
-          )}
-        </div>
-      </Modal>
+        entityType={entityType}
+        formData={formData}
+        onFormDataChange={setFormData}
+        onCreate={handleCreate}
+      />
 
-      <Modal
+      <EditModal
         isOpen={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false);
           setFormData({});
           setSelectedItem(null);
         }}
-        title={`${entityType === 'user' ? '사용자' : '게시글'} 수정`}
-        size="large"
-        showFooter
-        footerContent={
-          <>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                setIsEditModalOpen(false);
-                setFormData({});
-                setSelectedItem(null);
-              }}
-            >
-              취소
-            </Button>
-            <Button size="sm" onClick={handleUpdate}>
-              수정 완료
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          {selectedItem && (
-            <Alert variant="info">
-              ID: {selectedItem.id} | 생성일: {selectedItem.createdAt}
-              {entityType === 'post' &&
-                ` | 조회수: ${(selectedItem as Post).views}`}
-            </Alert>
-          )}
-
-          {entityType === 'user' ? (
-            <UserForm
-              formData={formData}
-              onFormDataChange={setFormData}
-              idPrefix="edit-"
-            />
-          ) : (
-            <PostForm
-              formData={formData}
-              onFormDataChange={setFormData}
-              idPrefix="edit-"
-            />
-          )}
-        </div>
-      </Modal>
+        entityType={entityType}
+        selectedItem={selectedItem}
+        formData={formData}
+        onFormDataChange={setFormData}
+        onUpdate={handleUpdate}
+      />
     </div>
   );
 };
