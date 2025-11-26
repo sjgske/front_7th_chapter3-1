@@ -36,122 +36,22 @@ const badgeVariants = cva(
 )
 
 export type BadgeProps = React.HTMLAttributes<HTMLDivElement> &
-  VariantProps<typeof badgeVariants> & {
-    status?: 'published' | 'draft' | 'archived' | 'pending' | 'rejected';
-    userRole?: 'admin' | 'moderator' | 'user' | 'guest';
-    priority?: 'high' | 'medium' | 'low';
-    paymentStatus?: 'paid' | 'pending' | 'failed' | 'refunded';
-  }
+  VariantProps<typeof badgeVariants>
 
 function Badge({
   className,
   variant,
   size,
   shape,
-  status,
-  userRole,
-  priority,
-  paymentStatus,
   children,
   ...props
 }: BadgeProps) {
-  let actualVariant = variant;
-  let actualContent = children;
-
-  // Status mapping
-  if (status) {
-    switch (status) {
-      case 'published':
-        actualVariant = 'success';
-        actualContent = actualContent || '게시됨';
-        break;
-      case 'draft':
-        actualVariant = 'warning';
-        actualContent = actualContent || '임시저장';
-        break;
-      case 'archived':
-        actualVariant = 'secondary';
-        actualContent = actualContent || '보관됨';
-        break;
-      case 'pending':
-        actualVariant = 'info';
-        actualContent = actualContent || '대기중';
-        break;
-      case 'rejected':
-        actualVariant = 'danger';
-        actualContent = actualContent || '거부됨';
-        break;
-    }
-  }
-
-  // User role mapping
-  if (userRole) {
-    switch (userRole) {
-      case 'admin':
-        actualVariant = 'danger';
-        actualContent = actualContent || '관리자';
-        break;
-      case 'moderator':
-        actualVariant = 'warning';
-        actualContent = actualContent || '운영자';
-        break;
-      case 'user':
-        actualVariant = 'primary';
-        actualContent = actualContent || '사용자';
-        break;
-      case 'guest':
-        actualVariant = 'secondary';
-        actualContent = actualContent || '게스트';
-        break;
-    }
-  }
-
-  // Priority mapping
-  if (priority) {
-    switch (priority) {
-      case 'high':
-        actualVariant = 'danger';
-        actualContent = actualContent || '높음';
-        break;
-      case 'medium':
-        actualVariant = 'warning';
-        actualContent = actualContent || '보통';
-        break;
-      case 'low':
-        actualVariant = 'info';
-        actualContent = actualContent || '낮음';
-        break;
-    }
-  }
-
-  // Payment status mapping
-  if (paymentStatus) {
-    switch (paymentStatus) {
-      case 'paid':
-        actualVariant = 'success';
-        actualContent = actualContent || '결제완료';
-        break;
-      case 'pending':
-        actualVariant = 'warning';
-        actualContent = actualContent || '결제대기';
-        break;
-      case 'failed':
-        actualVariant = 'danger';
-        actualContent = actualContent || '결제실패';
-        break;
-      case 'refunded':
-        actualVariant = 'secondary';
-        actualContent = actualContent || '환불됨';
-        break;
-    }
-  }
-
   return (
     <div
-      className={cn(badgeVariants({ variant: actualVariant, size, shape, className }))}
+      className={cn(badgeVariants({ variant, size, shape, className }))}
       {...props}
     >
-      {actualContent}
+      {children}
     </div>
   )
 }

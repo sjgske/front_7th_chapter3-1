@@ -100,13 +100,23 @@ export const DataTable: React.FC<TableProps> = ({
 
     if (entityType === 'user') {
       if (columnKey === 'role') {
-        return <Badge userRole={value} showIcon />;
+        const roleMap: Record<string, { variant: any; label: string }> = {
+          admin: { variant: 'danger', label: '관리자' },
+          moderator: { variant: 'warning', label: '운영자' },
+          user: { variant: 'primary', label: '사용자' },
+          guest: { variant: 'secondary', label: '게스트' },
+        };
+        const config = roleMap[value] || { variant: 'default', label: value };
+        return <Badge variant={config.variant}>{config.label}</Badge>;
       }
       if (columnKey === 'status') {
-        const badgeStatus =
-          value === 'active' ? 'published' :
-          value === 'inactive' ? 'draft' : 'rejected';
-        return <Badge status={badgeStatus} showIcon />;
+        const statusMap: Record<string, { variant: any; label: string }> = {
+          active: { variant: 'success', label: '활성' },
+          inactive: { variant: 'warning', label: '비활성' },
+          suspended: { variant: 'danger', label: '정지' },
+        };
+        const config = statusMap[value] || { variant: 'default', label: value };
+        return <Badge variant={config.variant}>{config.label}</Badge>;
       }
       if (columnKey === 'lastLogin') {
         return value || '-';
@@ -135,7 +145,15 @@ export const DataTable: React.FC<TableProps> = ({
         return <Badge variant={variant} shape="pill">{value}</Badge>;
       }
       if (columnKey === 'status') {
-        return <Badge status={value} showIcon />;
+        const statusMap: Record<string, { variant: any; label: string }> = {
+          published: { variant: 'success', label: '게시됨' },
+          draft: { variant: 'warning', label: '임시저장' },
+          archived: { variant: 'secondary', label: '보관됨' },
+          pending: { variant: 'info', label: '대기중' },
+          rejected: { variant: 'danger', label: '거부됨' },
+        };
+        const config = statusMap[value] || { variant: 'default', label: value };
+        return <Badge variant={config.variant}>{config.label}</Badge>;
       }
       if (columnKey === 'views') {
         return value?.toLocaleString() || '0';
