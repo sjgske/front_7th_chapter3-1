@@ -6,7 +6,7 @@ import type { User } from '../services/userService';
 import type { Post } from '../services/postService';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Table } from '@/components/ui';
+import { DataTable } from '@/components/ui';
 import {
   StatsCards,
   EntityTypeTabs,
@@ -319,7 +319,7 @@ export const ManagementPage: React.FC = () => {
             />
 
             <div className="border border-gray-300 bg-white overflow-auto">
-              <Table
+              <DataTable
                 columns={renderTableColumns()}
                 data={data}
                 striped

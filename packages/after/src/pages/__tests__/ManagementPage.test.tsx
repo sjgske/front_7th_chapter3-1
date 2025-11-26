@@ -20,18 +20,18 @@ describe('ManagementPage - User Management', () => {
     const createButton = screen.getByRole('button', { name: '새로 만들기' });
     await user.click(createButton);
 
-    // name으로 input과 select 직접 찾기
+    // id로 input 찾기 (Radix UI Select는 <select> 태그가 아님)
     await waitFor(() => {
-      expect(document.querySelector('input[name="username"]')).toBeInTheDocument();
+      expect(document.querySelector('input[id="create-username"]')).toBeInTheDocument();
     });
 
-    const usernameInput = document.querySelector('input[name="username"]') as HTMLInputElement;
-    const emailInput = document.querySelector('input[name="email"]') as HTMLInputElement;
-    const roleSelect = document.querySelector('select[name="role"]') as HTMLSelectElement;
+    const usernameInput = document.querySelector('input[id="create-username"]') as HTMLInputElement;
+    const emailInput = document.querySelector('input[id="create-email"]') as HTMLInputElement;
 
     await user.type(usernameInput, 'testuser');
     await user.type(emailInput, 'test@example.com');
-    await user.selectOptions(roleSelect, 'user');
+
+    // Radix UI Select는 기본값이 'user'로 설정되어 있으므로 별도 선택 불필요
 
     const createBtn = screen.getByRole('button', { name: '생성' });
     await user.click(createBtn);
@@ -48,10 +48,10 @@ describe('ManagementPage - User Management', () => {
     await user.click(editButtons[editButtons.length - 1]);
 
     await waitFor(() => {
-      expect(document.querySelector('input[name="email"]')).toBeInTheDocument();
+      expect(document.querySelector('input[id="edit-email"]')).toBeInTheDocument();
     });
 
-    const emailInputEdit = document.querySelector('input[name="email"]') as HTMLInputElement;
+    const emailInputEdit = document.querySelector('input[id="edit-email"]') as HTMLInputElement;
     await user.clear(emailInputEdit);
     await user.type(emailInputEdit, 'updated@example.com');
 
